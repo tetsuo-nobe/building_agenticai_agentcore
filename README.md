@@ -1,0 +1,2 @@
+# building_agenticai_agentcore
+Building AgenticAI AgentCore コースの参考資料
