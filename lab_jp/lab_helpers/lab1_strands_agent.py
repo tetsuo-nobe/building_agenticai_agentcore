@@ -4,7 +4,8 @@ from ddgs import DDGS
 from strands_tools import retrieve
 import boto3
 
-MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
+#MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
+MODEL_ID = "us.amazon.nova-pro-v1:0"
 
 # エージェントの役割と機能を定義するシステムプロンプト
 SYSTEM_PROMPT = """あなたは、電子機器を扱うeコマース企業で、親切でプロフェッショナルなカスタマーサポートアシスタントとして活躍しています。
