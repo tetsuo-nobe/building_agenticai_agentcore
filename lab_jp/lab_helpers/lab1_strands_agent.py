@@ -6,32 +6,31 @@ import boto3
 
 MODEL_ID = "us.amazon.nova-pro-v1:0"
 
-# System prompt defining the agent's role and capabilities
-SYSTEM_PROMPT = """You are a helpful and professional customer support assistant for an electronics e-commerce company.
-Your role is to:
-- Provide accurate information using the tools available to you
-- Support the customer with technical information and product specifications.
-- Be friendly, patient, and understanding with customers
-- Always offer additional help after answering questions
-- If you can't help with something, direct customers to the appropriate contact
+# エージェントの役割と機能を定義するシステムプロンプト
+SYSTEM_PROMPT = """あなたは、電子機器を扱うeコマース企業で、親切でプロフェッショナルなカスタマーサポートアシスタントとして活躍しています。
+あなたの役割は以下のとおりです。
+- 利用可能なツールを使用して正確な情報を提供する。
+- 技術情報や製品仕様についてお客様をサポ​​ートする。
+- お客様に対して、親しみやすく、忍耐強く、そして理解ある対応をする。
+- 質問に答えた後は、必ず追加のサポートを提供する。
+- 対応できない場合は、適切な担当者にお客様を案内する。
 
-You have access to the following tools:
-1. get_return_policy() - For warranty and return policy questions
-2. get_product_info() - To get information about a specific product
-3. web_search() - To access current technical documentation, or for updated information. 
-Always use the appropriate tool to get accurate, up-to-date information rather than making assumptions about electronic products or specifications."""
-
+以下のツールを利用できます。
+1. get_return_policy() - 保証および返品ポリシーに関する質問
+2. get_product_info() - 特定の製品に関する情報を取得する
+3. web_search() - 最新の技術ドキュメントにアクセスする、または最新情報を入手する。
+電子機器製品やその仕様について憶測で判断するのではなく、常に適切なツールを使用して、正確で最新の情報を入手してください。"""
 
 @tool
 def web_search(keywords: str, region: str = "us-en", max_results: int = 5) -> str:
-    """Search the web for updated information.
+    """更新された情報をウェブで検索してください。
     
     Args:
-        keywords (str): The search query keywords.
-        region (str): The search region: wt-wt, us-en, uk-en, ru-ru, etc..
-        max_results (int | None): The maximum number of results to return.
+        keywords (str): 検索クエリのキーワード
+        region (str): 検索リージョン: wt-wt、us-en、uk-en、ru-ru など
+        max_results (int | None): 
     Returns:
-        List of dictionaries with search results.
+        検索結果の辞書の一覧
     
     """
     try:
@@ -48,15 +47,15 @@ def web_search(keywords: str, region: str = "us-en", max_results: int = 5) -> st
 @tool
 def get_return_policy(product_category: str) -> str:
     """
-    Get return policy information for a specific product category.
+    特定の製品カテゴリの返品ポリシー情報を取得します。
 
     Args:
-        product_category: Electronics category (e.g., 'smartphones', 'laptops', 'accessories')
+        product_category: エレクトロニクス カテゴリ (e.g., 'smartphones', 'laptops', 'accessories')
 
     Returns:
-        Formatted return policy details including timeframes and conditions
+        返品期限や条件を含む返品ポリシーの詳細をフォーマットしたもの
     """
-    # Mock return policy database - in real implementation, this would query policy database
+    # 返品ポリシーデータベースのモック - 実際の実装では、ポリシーデータベースを照会します
     return_policies = {
         "smartphones": {
             "window": "30 days",
@@ -107,14 +106,14 @@ def get_return_policy(product_category: str) -> str:
 @tool
 def get_product_info(product_type: str) -> str:
     """
-    Get detailed technical specifications and information for electronics products.
+    電子製品の詳細な技術仕様と情報を入手します。
 
     Args:
-        product_type: Electronics product type (e.g., 'laptops', 'smartphones', 'headphones', 'monitors')
+        product_type: エレクトロニクス製品タイプ (e.g., 'laptops', 'smartphones', 'headphones', 'monitors')
     Returns:
-        Formatted product information including warranty, features, and policies
+        保証、機能、ポリシーなどのフォーマットされた製品情報
     """
-    # Mock product catalog - in real implementation, this would query a product database
+    # 製品カタログのモック - 実際の実装では、製品データベースを照会します
     products = {
         "laptops": {
             "warranty": "1-year manufacturer warranty + optional extended coverage",
@@ -159,18 +158,18 @@ def get_product_info(product_type: str) -> str:
 @tool
 def get_technical_support(issue_description: str) -> str:
     """
-    Query the knowledge base for technical support information.
+    技術サポート情報については、ナレッジ ベースを照会してください。
     
     Args:
-        issue_description: Description of the technical issue or question
+        issue_description: 技術的な問題または質問の説明
         
     Returns:
-        Technical support information from the knowledge base
+        ナレッジベースからの技術サポート情報
     """
-    # Changed tabs to spaces for consistent indentation
-    # Added docstring following AgentCore best practices
+    # インデントの一貫性を保つためにタブをスペースに変更しました
+    # AgentCore のベストプラクティスに従ってドキュメント文字列を追加しました
     try:
-        # Get KB ID from parameter store
+        # パラメータストアから KB IDを取得する
         ssm = boto3.client('ssm')
         account_id = boto3.client('sts').get_caller_identity()['Account']
         region = boto3.Session().region_name
@@ -178,7 +177,7 @@ def get_technical_support(issue_description: str) -> str:
         kb_id = ssm.get_parameter(Name=f"/{account_id}-{region}/kb/knowledge-base-id")['Parameter']['Value']
         print(f"Successfully retrieved KB ID: {kb_id}")
 
-        # Use strands retrieve tool
+        # strands retrieve tool の使用
         tool_use = {
             "toolUseId": "tech_support_query",
             "input": {
